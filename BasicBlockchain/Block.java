@@ -11,5 +11,11 @@ public class Block {
         this.data = data;
         this.previousHash = previousHash;
         this.timeStamp = new Date().getTime();
+        this.hash = calculateHash();
+    }
+
+    public String calculateHash() {
+        String calculatedHash = StringUtil.applySha256(previousHash + Long.toString(timeStamp) + data);
+        return calculatedHash;
     }
 }
