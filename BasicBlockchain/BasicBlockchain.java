@@ -1,14 +1,16 @@
 package BasicBlockchain;
+import java.util.ArrayList;
+import com.google.gson.GsonBuilder;
 
 public class BasicBlockchain {
+    public static ArrayList<Block> blockchain = new ArrayList<Block>();
+
     public static void main(String[] args) {
-        Block firstBlock = new Block("First Block", "0");
-        System.out.println("Hash for Block 1: " + firstBlock.hash);
+        blockchain.add(new Block("Block 1", "0"));
+        blockchain.add(new Block("Block 2", blockchain.get(blockchain.size() - 1).hash));
+        blockchain.add(new Block("Block 3", blockchain.get(blockchain.size() - 1).hash));
 
-        Block secondBlock = new Block("Second Block", "1");
-        System.out.println("Hash for Block 2: " + secondBlock.hash);
-
-        Block thirdBlock = new Block("Third Block", "2");
-        System.out.println("Hash for Block 3: " + thirdBlock.hash);
+        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
+        System.out.println(blockchainJson);
     }
 }
