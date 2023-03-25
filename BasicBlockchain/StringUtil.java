@@ -1,5 +1,6 @@
 package BasicBlockchain;
 import java.security.MessageDigest;
+import java.security.PublicKey;
 
 public class StringUtil {
     public static String applySha256(String input) {
@@ -19,5 +20,9 @@ public class StringUtil {
         catch(Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getStringFromKey(PublicKey sender) {
+        return null;
     }
 }
