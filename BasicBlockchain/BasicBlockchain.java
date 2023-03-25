@@ -1,6 +1,7 @@
 package BasicBlockchain;
 import java.util.ArrayList;
 import com.google.gson.GsonBuilder;
+import java.security.Security;
 
 public class BasicBlockchain {
     public static ArrayList<Block> blockchain = new ArrayList<Block>();
@@ -14,8 +15,25 @@ public class BasicBlockchain {
      */
     public static int difficulty = 5;
 
+    public static Wallet walletA;
+    public static Wallet walletB;
+
     public static void main(String[] args) {
-        blockchain.add(new Block("Block 1", "0"));
+        // Set up Bouncey Castle as the security provider
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+
+        walletA = new Wallet();
+        walletB = new Wallet();
+
+        System.out.println("Wallet A private key: " + StringUtil.getStringFromKey(walletA.priK));
+        System.out.println("Wallet B public key: " + StringUtil.getStringFromKey(walletA.pubK));
+
+        Transaction transaction = new Transaction(walletA.pubK, walletB.pubK, 5, null);
+        transaction.generateSignature(walletA.priK);
+
+        System.out.println("Is signature verified: " + transaction.verifySignature());
+
+        /*blockchain.add(new Block("Block 1", "0"));
         System.out.println("Mining Block 1...");
         blockchain.get(0).mineBlock(difficulty);
 
@@ -31,7 +49,7 @@ public class BasicBlockchain {
 
         String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
         System.out.println("\nThe Block Chain: ");
-        System.out.println(blockchainJson);
+        System.out.println(blockchainJson);*/
     }
 
     public static Boolean isChainValid() {
