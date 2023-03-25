@@ -28,4 +28,16 @@ public class Transaction {
         return StringUtil.applySha256(StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(recipient) + 
                                         Float.toString(value) + sequence);
     }
+
+    // Signs the data
+    public void generateSignature(PrivateKey pK) {
+        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(recipient) + Float.toString(value);
+        signature = StringUtil.applySigECDSA(pK, data);
+    }
+
+    // Verifies data to ensure nothing has changed
+    public boolean verifySignature() {
+        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(recipient) + Float.toString(value);
+        return StringUtil.verifySigECDSA(sender, data, signature);
+    }
 }
