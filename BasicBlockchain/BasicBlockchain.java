@@ -1,10 +1,12 @@
 package BasicBlockchain;
 import java.util.ArrayList;
+import java.util.HashMap;
 import com.google.gson.GsonBuilder;
 import java.security.Security;
 
 public class BasicBlockchain {
     public static ArrayList<Block> blockchain = new ArrayList<Block>();
+    public static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>(); // List of all unspent transactions
 
     /*
      * At the harder difficulties solutions may require more than integer.MAX_VALUE, 
@@ -14,7 +16,7 @@ public class BasicBlockchain {
      * 4–6 for testing
      */
     public static int difficulty = 5;
-
+    public static float minTrans = 0.1f;
     public static Wallet walletA;
     public static Wallet walletB;
 

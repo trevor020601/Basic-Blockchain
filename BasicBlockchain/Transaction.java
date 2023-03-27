@@ -40,4 +40,57 @@ public class Transaction {
         String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(recipient) + Float.toString(value);
         return StringUtil.verifySigECDSA(sender, data, signature);
     }
+
+    public boolean processTransaction() {
+        if(verifySignature() == false) {
+            System.out.println("Transaction signature failed to verify!");
+            return false;
+        }
+
+        for (TransactionInput transactionInput : inputs) {
+            transactionInput.UTXO = BasicBlockchain.UTXOs.get(transactionInput.transactionOutputId);
+        }
+
+        if (getInputsValue() < BasicBlockchain.minTrans) {
+            System.out.println("Transaction inputs too small: " + getInputsValue());
+            return false;
+        }
+
+        float leftOver = getInputsValue() - value; // left over change
+        tId = calculateHash();
+        outputs.add(new TransactionOutput(this.recipient, value, tId)); // send amount to recipient
+        outputs.add(new TransactionOutput(this.sender, leftOver, tId)); // send left over 'change' back to sender
+
+        // Add outputs to unspent list
+        for (TransactionOutput transactionOutput : outputs) {
+            BasicBlockchain.UTXOs.put(transactionOutput.id, transactionOutput);
+        }
+
+        // remove trans inputs from UTXO lists as spent
+        for (TransactionInput transactionInput : inputs) {
+            if(transactionInput.UTXO == null)
+                continue;
+            BasicBlockchain.UTXOs.remove(transactionInput.UTXO.id);
+        }
+
+        return true;
+    }
+
+    public float getInputsValue() {
+        float total = 0;
+        for (TransactionInput transactionInput : inputs) {
+            if (transactionInput.UTXO == null)
+                continue;
+            total += transactionInput.UTXO.amount;
+        }
+        return total;
+    }
+
+    public float getOutputsValue() {
+        float total = 0;
+        for (TransactionOutput transactionOutput : outputs) {
+            total += transactionOutput.amount;
+        }
+        return total;
+    }
 }
