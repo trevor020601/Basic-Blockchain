@@ -1,6 +1,7 @@
 package BasicBlockchain;
 import java.security.MessageDigest;
 import java.security.*;
+import java.util.ArrayList;
 import java.util.Base64;
 
 public class StringUtil {
@@ -59,5 +60,24 @@ public class StringUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static String getMerkleRoot(ArrayList<Transaction> trans) {
+        int count = trans.size();
+        ArrayList<String> prevTreeLayer = new ArrayList<String>();
+        for (Transaction t : trans) {
+            prevTreeLayer.add(t.tId);
+        }
+        ArrayList<String> treeLayer = prevTreeLayer;
+        while(count > 1) {
+            treeLayer = new ArrayList<String>();
+            for(int i = 1; i < prevTreeLayer.size(); i++) {
+                treeLayer.add(applySha256(prevTreeLayer.get(i - 1) + prevTreeLayer.get(i)));
+            }
+            count = treeLayer.size();
+            prevTreeLayer = treeLayer;
+        }
+        String merkleRoot = (treeLayer.size() == 1) ? treeLayer.get(0) : "";
+        return merkleRoot;
     }
 }
